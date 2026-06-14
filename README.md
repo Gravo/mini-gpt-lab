@@ -76,6 +76,7 @@ This project is designed to show working knowledge below the API layer:
 ## Notes
 
 - [GPT principles visual guide](docs/gpt_principles_visual.md): tokenizer, hidden dimensions, Q/K/V, KV cache, vocab logits, and decoder-only self-supervised training.
+- [Stage 1 QKV checkpoint](docs/stage_1_qkv_checkpoint.md): current understanding before the QKV microscope experiment.
 - [3-month roadmap](docs/three_month_roadmap.md): staged plan from GPT internals to vLLM early exposure and inference systems.
 
 ## GPT Block Anatomy
