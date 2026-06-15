@@ -195,6 +195,117 @@ output: [4, 768]
 
 The heads do not separately map back to vocab. They are intermediate views that merge back into one hidden state.
 
+## Shape Drill: Scores, Per-Head Output, Concat, and Logits
+
+Use a non-ambiguous microscope setup:
+
+```text
+batch = 1
+seq_len = 4
+hidden_dim = 6
+n_head = 2
+head_dim = 3
+vocab_size = 10
+```
+
+After embedding:
+
+```text
+X: [1, 4, 6]
+```
+
+After Q/K/V projection and head split:
+
+```text
+Q/K/V: [1, 2, 4, 3]
+```
+
+Meaning:
+
+```text
+1 batch
+2 heads
+4 token positions
+3 features per token inside each head
+```
+
+Attention scores:
+
+```text
+single head:
+Q:   [4, 3]
+K:   [4, 3]
+K.T: [3, 4]
+
+Q @ K.T -> [4, 4]
+```
+
+With batch and heads:
+
+```text
+attention scores: [1, 2, 4, 4]
+```
+
+The `[4, 4]` part is token-to-token relation scores:
+
+```text
+4 query positions x 4 key positions
+```
+
+Attention output per head:
+
+```text
+weights: [1, 2, 4, 4]
+V:       [1, 2, 4, 3]
+
+weights @ V -> [1, 2, 4, 3]
+```
+
+For a single head:
+
+```text
+[4, 4] @ [4, 3] -> [4, 3]
+```
+
+Meaning:
+
+```text
+each of the 4 token positions mixes the 4 value vectors,
+and the result is still 3-dimensional inside that head.
+```
+
+Concat output:
+
+```text
+head 0 output: [4, 3]
+head 1 output: [4, 3]
+
+concat -> [4, 6]
+```
+
+With batch:
+
+```text
+concat output: [1, 4, 6]
+```
+
+lm_head logits:
+
+```text
+Transformer output: [1, 4, 6]
+lm_head:            Linear(6 -> 10)
+logits:             [1, 4, 10]
+```
+
+Short rule:
+
+```text
+scores are token-to-token:       [seq_len, seq_len]
+per-head output returns to:      [seq_len, head_dim]
+concat returns to:               [seq_len, hidden_dim]
+lm_head maps to:                 [seq_len, vocab_size]
+```
+
 ## Semantic Intuition for Heads
 
 A head can be understood as one learned relation view.
@@ -243,9 +354,10 @@ First version:
 ```text
 batch = 1
 seq_len = 4
-hidden_dim = 4
-n_head = 1
-head_dim = 4
+hidden_dim = 6
+n_head = 2
+head_dim = 3
+vocab_size = 10
 ```
 
 Print:
@@ -261,19 +373,19 @@ softmax weights
 weights @ V
 ```
 
-Then change to:
+Optional follow-up:
 
 ```text
-n_head = 2
-head_dim = 2
+n_head = 1
+head_dim = 6
 ```
 
 And inspect:
 
 ```text
-scores:  [2, 4, 4]
-out:     [2, 4, 2]
-concat:  [4, 4]
+scores:  [1, 4, 4]
+out:     [1, 4, 6]
+concat:  [4, 6]
 ```
 
 The learning goal:
@@ -281,4 +393,3 @@ The learning goal:
 ```text
 See attention as concrete matrix multiplication, not only as a metaphor.
 ```
-
