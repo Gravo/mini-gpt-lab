@@ -87,6 +87,7 @@ This project is designed to show working knowledge below the API layer:
 - [009 Hongloumeng clean 80 context 256](experiments/009_hongloumeng_clean_80_context_256.md): retest longer context after data cleaning.
 - [010 Hongloumeng clean 80 wider model](experiments/010_hongloumeng_clean_80_wide.md): larger depth and width on the cleaned corpus.
 - [011 Hongloumeng wide dropout 0.15](experiments/011_hongloumeng_wide_dropout015.md): longer wide-model training with best-checkpoint saving.
+- [012 Hongloumeng width 256](experiments/012_hongloumeng_width256.md): wider 6-layer model with 256 hidden dimensions.
 
 ## GPT Block Anatomy
 
