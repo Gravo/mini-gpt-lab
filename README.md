@@ -86,6 +86,7 @@ This project is designed to show working knowledge below the API layer:
 - [008 Hongloumeng clean 80 chapters](experiments/008_hongloumeng_clean_80.md): cleaner Wikisource text and a larger 80-chapter corpus.
 - [009 Hongloumeng clean 80 context 256](experiments/009_hongloumeng_clean_80_context_256.md): retest longer context after data cleaning.
 - [010 Hongloumeng clean 80 wider model](experiments/010_hongloumeng_clean_80_wide.md): larger depth and width on the cleaned corpus.
+- [011 Hongloumeng wide dropout 0.15](experiments/011_hongloumeng_wide_dropout015.md): longer wide-model training with best-checkpoint saving.
 
 ## GPT Block Anatomy
 
