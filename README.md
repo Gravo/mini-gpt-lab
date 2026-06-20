@@ -81,6 +81,7 @@ This project is designed to show working knowledge below the API layer:
 - [004 QKV microscope](experiments/004_qkv_microscope.md): a small tensor experiment that prints Q/K/V, attention scores, causal mask, per-head output, concat output, and lm_head logits.
 - [005 Hongloumeng baseline](experiments/005_hongloumeng_baseline.md): a Chinese character-level baseline using public-domain Wikisource text.
 - [006 Hongloumeng data scale](experiments/006_hongloumeng_data_scale.md): same small GPT, more chapters, longer training.
+- [007 Hongloumeng context 256](experiments/007_hongloumeng_context_256.md): same small GPT and data, longer context window.
 
 ## GPT Block Anatomy
 

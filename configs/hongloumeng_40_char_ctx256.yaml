@@ -1,0 +1,19 @@
+data_path: data/hongloumeng_40.txt
+out_dir: runs/hongloumeng_40_char_ctx256
+seed: 1337
+batch_size: 32
+block_size: 256
+max_steps: 2000
+eval_interval: 200
+eval_iters: 20
+learning_rate: 0.0003
+device: auto
+model:
+  vocab_size: null
+  n_layer: 4
+  n_head: 4
+  n_embd: 128
+  dropout: 0.1
+  norm: layernorm
+  mlp: gelu
+  position: learned
