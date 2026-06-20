@@ -39,6 +39,29 @@ def make_norm(kind: str, dim: int) -> nn.Module:
     raise ValueError(f"Unknown norm: {kind}")
 
 
+def filter_logits(logits: torch.Tensor, top_k: int | None = None, top_p: float | None = None) -> torch.Tensor:
+    if top_k is not None:
+        if top_k <= 0:
+            raise ValueError("top_k must be positive")
+        keep = min(top_k, logits.size(-1))
+        threshold = torch.topk(logits, keep, dim=-1).values[..., -1, None]
+        logits = logits.masked_fill(logits < threshold, float("-inf"))
+
+    if top_p is not None:
+        if not 0.0 < top_p <= 1.0:
+            raise ValueError("top_p must be in (0, 1]")
+        sorted_logits, sorted_idx = torch.sort(logits, descending=True, dim=-1)
+        sorted_probs = F.softmax(sorted_logits, dim=-1)
+        cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+        remove = cumulative_probs > top_p
+        remove[..., 1:] = remove[..., :-1].clone()
+        remove[..., 0] = False
+        sorted_logits = sorted_logits.masked_fill(remove, float("-inf"))
+        logits = torch.full_like(logits, float("-inf")).scatter(-1, sorted_idx, sorted_logits)
+
+    return logits
+
+
 class MLP(nn.Module):
     def __init__(self, config: GPTConfig):
         super().__init__()
@@ -140,7 +163,15 @@ class GPT(nn.Module):
         return logits, loss
 
     @torch.no_grad()
-    def generate(self, idx: torch.Tensor, max_new_tokens: int, temperature: float = 1.0, use_cache: bool = True) -> torch.Tensor:
+    def generate(
+        self,
+        idx: torch.Tensor,
+        max_new_tokens: int,
+        temperature: float = 1.0,
+        use_cache: bool = True,
+        top_k: int | None = None,
+        top_p: float | None = None,
+    ) -> torch.Tensor:
         self.eval()
         cache_enabled = use_cache and self.config.position == "rope"
         cache = empty_cache(self.config.n_layer) if cache_enabled else None
@@ -156,6 +187,7 @@ class GPT(nn.Module):
                 idx_cond = idx[:, -self.config.block_size :]
                 logits, _ = self(idx_cond)
             logits = logits[:, -1, :] / max(temperature, 1e-6)
+            logits = filter_logits(logits, top_k=top_k, top_p=top_p)
             probs = F.softmax(logits, dim=-1)
             next_id = torch.multinomial(probs, num_samples=1)
             idx = torch.cat((idx, next_id), dim=1)

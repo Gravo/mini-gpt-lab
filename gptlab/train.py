@@ -38,6 +38,18 @@ def estimate_loss(model: GPT, train_data: torch.Tensor, val_data: torch.Tensor, 
     return out
 
 
+def save_checkpoint(path: Path, model: GPT, model_cfg: GPTConfig, tokenizer: CharTokenizer, metadata: dict) -> None:
+    torch.save(
+        {
+            "model": model.state_dict(),
+            "config": model_cfg.__dict__,
+            "chars": tokenizer.chars,
+            "metadata": metadata,
+        },
+        path,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, default=Path("configs/tiny_shakespeare.yaml"))
@@ -62,11 +74,30 @@ def main() -> None:
     out_dir = Path(cfg["out_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
     metrics_path = out_dir / "metrics.jsonl"
+    best_val = float("inf")
+    best_step = -1
 
     for step in range(cfg["max_steps"] + 1):
         if step % cfg["eval_interval"] == 0:
             losses = estimate_loss(model, train_data, val_data, cfg, device)
-            row = {"step": step, **losses}
+            is_best = losses["val"] < best_val
+            if is_best:
+                best_val = losses["val"]
+                best_step = step
+                save_checkpoint(
+                    out_dir / "best_ckpt.pt",
+                    model,
+                    model_cfg,
+                    tokenizer,
+                    {
+                        "step": step,
+                        "best_step": best_step,
+                        "best_val": best_val,
+                        "train_loss": losses["train"],
+                        "val_loss": losses["val"],
+                    },
+                )
+            row = {"step": step, **losses, "best_val": best_val, "best_step": best_step, "is_best": is_best}
             print(row)
             with metrics_path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(row) + "\n")
@@ -77,7 +108,13 @@ def main() -> None:
         loss.backward()
         optimizer.step()
 
-    torch.save({"model": model.state_dict(), "config": model_cfg.__dict__, "chars": tokenizer.chars}, out_dir / "ckpt.pt")
+    save_checkpoint(
+        out_dir / "ckpt.pt",
+        model,
+        model_cfg,
+        tokenizer,
+        {"step": cfg["max_steps"], "best_step": best_step, "best_val": best_val},
+    )
 
 
 if __name__ == "__main__":

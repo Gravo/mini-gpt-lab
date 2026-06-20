@@ -13,6 +13,8 @@ def main() -> None:
     parser.add_argument("--prompt", default="To be, or not to be")
     parser.add_argument("--max-new-tokens", type=int, default=200)
     parser.add_argument("--temperature", type=float, default=0.8)
+    parser.add_argument("--top-k", type=int, default=None)
+    parser.add_argument("--top-p", type=float, default=None)
     parser.add_argument("--no-cache", action="store_true")
     args = parser.parse_args()
 
@@ -23,7 +25,14 @@ def main() -> None:
     model.load_state_dict(ckpt["model"])
 
     idx = torch.tensor([tokenizer.encode(args.prompt)], dtype=torch.long, device=device)
-    out = model.generate(idx, args.max_new_tokens, args.temperature, use_cache=not args.no_cache)
+    out = model.generate(
+        idx,
+        args.max_new_tokens,
+        args.temperature,
+        use_cache=not args.no_cache,
+        top_k=args.top_k,
+        top_p=args.top_p,
+    )
     print(tokenizer.decode(out[0].tolist()))
 
 
