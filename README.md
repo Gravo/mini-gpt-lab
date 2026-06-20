@@ -83,6 +83,8 @@ This project is designed to show working knowledge below the API layer:
 - [006 Hongloumeng data scale](experiments/006_hongloumeng_data_scale.md): same small GPT, more chapters, longer training.
 - [007 Hongloumeng context 256](experiments/007_hongloumeng_context_256.md): same small GPT and data, longer context window.
 - [008 Hongloumeng clean 80 chapters](experiments/008_hongloumeng_clean_80.md): cleaner Wikisource text and a larger 80-chapter corpus.
+- [009 Hongloumeng clean 80 context 256](experiments/009_hongloumeng_clean_80_context_256.md): retest longer context after data cleaning.
+- [010 Hongloumeng clean 80 wider model](experiments/010_hongloumeng_clean_80_wide.md): larger depth and width on the cleaned corpus.
 
 ## GPT Block Anatomy
 
