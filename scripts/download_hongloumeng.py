@@ -10,6 +10,7 @@ from urllib.request import Request, urlopen
 
 SOURCE = "https://zh.wikisource.org/wiki/紅樓夢"
 RAW_ENDPOINT = "https://zh.wikisource.org/w/index.php?title={title}&action=raw"
+NAVIGATION_LINE = re.compile(r"^[\s　]*(上一回|下一回|回目录|回目錄|回)[\s　]*(上一回|下一回|回目录|回目錄|回)?[\s　]*$")
 
 
 def fetch_raw_page(title: str, timeout: int = 30) -> str:
@@ -47,6 +48,7 @@ def strip_templates(text: str) -> str:
 def clean_wikitext(raw: str) -> str:
     raw = re.sub(r"<ref[^>/]*>.*?</ref>", "", raw, flags=re.DOTALL)
     raw = re.sub(r"<ref[^>]*/>", "", raw)
+    raw = re.sub(r"^.*\[\[\.\./.*$", "", raw, flags=re.MULTILINE)
     text = strip_templates(raw)
     text = re.sub(r"<[^>]+>", "", text)
     text = re.sub(r"-\{([^{}]+)\}-", r"\1", text)
@@ -56,6 +58,7 @@ def clean_wikitext(raw: str) -> str:
     text = re.sub(r"^\s*[-]{4,}\s*$", "", text, flags=re.MULTILINE)
     text = re.sub(r"^#.*$", "", text, flags=re.MULTILINE)
     text = re.sub(r"^\s*\[\[Category:.*$", "", text, flags=re.MULTILINE)
+    text = "\n".join(line for line in text.splitlines() if not NAVIGATION_LINE.match(line))
     text = re.sub(r"\n{3,}", "\n\n", text)
     return html.unescape(text).strip()
 

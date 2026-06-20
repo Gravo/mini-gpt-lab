@@ -82,6 +82,7 @@ This project is designed to show working knowledge below the API layer:
 - [005 Hongloumeng baseline](experiments/005_hongloumeng_baseline.md): a Chinese character-level baseline using public-domain Wikisource text.
 - [006 Hongloumeng data scale](experiments/006_hongloumeng_data_scale.md): same small GPT, more chapters, longer training.
 - [007 Hongloumeng context 256](experiments/007_hongloumeng_context_256.md): same small GPT and data, longer context window.
+- [008 Hongloumeng clean 80 chapters](experiments/008_hongloumeng_clean_80.md): cleaner Wikisource text and a larger 80-chapter corpus.
 
 ## GPT Block Anatomy
 
