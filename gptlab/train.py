@@ -71,18 +71,47 @@ def main() -> None:
     text = Path(cfg["data_path"]).read_text(encoding="utf-8")
     tokenizer_cfg = cfg.get("tokenizer") or {}
     tokenizer = build_tokenizer(text, tokenizer_cfg)
-    encoded_cache_path = tokenizer_cfg.get("encoded_cache_path")
-    if encoded_cache_path and Path(encoded_cache_path).exists():
-        ids = torch.load(encoded_cache_path, weights_only=True)
+    split_mode = cfg.get("split", "token")
+    if split_mode == "text":
+        raw_n = int(0.9 * len(text))
+        train_text, val_text = text[:raw_n], text[raw_n:]
+        train_cache_path = tokenizer_cfg.get("train_encoded_cache_path")
+        val_cache_path = tokenizer_cfg.get("val_encoded_cache_path")
+        if train_cache_path and Path(train_cache_path).exists():
+            train_data = torch.load(train_cache_path, weights_only=True)
+        else:
+            train_data = torch.tensor(tokenizer.encode(train_text), dtype=torch.long)
+            if train_cache_path:
+                train_path = Path(train_cache_path)
+                train_path.parent.mkdir(parents=True, exist_ok=True)
+                torch.save(train_data, train_path)
+        if val_cache_path and Path(val_cache_path).exists():
+            val_data = torch.load(val_cache_path, weights_only=True)
+        else:
+            val_data = torch.tensor(tokenizer.encode(val_text), dtype=torch.long)
+            if val_cache_path:
+                val_path = Path(val_cache_path)
+                val_path.parent.mkdir(parents=True, exist_ok=True)
+                torch.save(val_data, val_path)
+        train_tokens_per_char = len(train_data) / len(train_text)
+        val_tokens_per_char = len(val_data) / len(val_text)
+    elif split_mode == "token":
+        encoded_cache_path = tokenizer_cfg.get("encoded_cache_path")
+        if encoded_cache_path and Path(encoded_cache_path).exists():
+            ids = torch.load(encoded_cache_path, weights_only=True)
+        else:
+            ids = torch.tensor(tokenizer.encode(text), dtype=torch.long)
+            if encoded_cache_path:
+                encoded_path = Path(encoded_cache_path)
+                encoded_path.parent.mkdir(parents=True, exist_ok=True)
+                torch.save(ids, encoded_path)
+        tokens_per_char = len(ids) / len(text)
+        train_tokens_per_char = tokens_per_char
+        val_tokens_per_char = tokens_per_char
+        n = int(0.9 * len(ids))
+        train_data, val_data = ids[:n], ids[n:]
     else:
-        ids = torch.tensor(tokenizer.encode(text), dtype=torch.long)
-        if encoded_cache_path:
-            encoded_path = Path(encoded_cache_path)
-            encoded_path.parent.mkdir(parents=True, exist_ok=True)
-            torch.save(ids, encoded_path)
-    tokens_per_char = len(ids) / len(text)
-    n = int(0.9 * len(ids))
-    train_data, val_data = ids[:n], ids[n:]
+        raise ValueError(f"Unknown split mode: {split_mode}")
 
     model_cfg = GPTConfig(**{**cfg["model"], "vocab_size": tokenizer.vocab_size, "block_size": cfg["block_size"]})
     model = GPT(model_cfg).to(device)
@@ -115,8 +144,8 @@ def main() -> None:
                     },
                 )
             row = {"step": step, **losses, "best_val": best_val, "best_step": best_step, "is_best": is_best}
-            row["train_nats_per_char"] = losses["train"] * tokens_per_char
-            row["val_nats_per_char"] = losses["val"] * tokens_per_char
+            row["train_nats_per_char"] = losses["train"] * train_tokens_per_char
+            row["val_nats_per_char"] = losses["val"] * val_tokens_per_char
             print(row)
             with metrics_path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(row) + "\n")
