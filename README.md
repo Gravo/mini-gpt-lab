@@ -93,6 +93,7 @@ This project is designed to show working knowledge below the API layer:
 - [015 Memorization probe](experiments/015_memorization_probe.md): compare generated continuations against exact source text continuations.
 - [016 Hongloumeng RoPE](experiments/016_hongloumeng_rope.md): compare learned absolute position embeddings with RoPE.
 - [017 Hongloumeng RMSNorm](experiments/017_hongloumeng_rmsnorm.md): compare LayerNorm and RMSNorm after RoPE.
+- [018 Hongloumeng SwiGLU](experiments/018_hongloumeng_swiglu.md): compare GELU and SwiGLU MLPs after RoPE.
 
 ## GPT Block Anatomy
 
