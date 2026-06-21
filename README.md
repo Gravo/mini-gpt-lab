@@ -99,6 +99,7 @@ This project is designed to show working knowledge below the API layer:
 - [021 Hongloumeng BPE 4500](experiments/021_hongloumeng_bpe4500.md): compare character tokenization with a small BPE tokenizer.
 - [022 BPE tokenizer cache](experiments/022_bpe_tokenizer_cache.md): cache trained BPE tokenizer state for reproducible larger-vocab experiments.
 - [023 Hongloumeng BPE 6000](experiments/023_hongloumeng_bpe6000.md): test a larger BPE vocabulary with the best RoPE baseline.
+- [024 Hongloumeng BPE 6000 context 192](experiments/024_hongloumeng_bpe6000_context192.md): combine larger BPE tokenization with longer context.
 
 ## GPT Block Anatomy
 
