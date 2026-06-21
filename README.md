@@ -91,6 +91,7 @@ This project is designed to show working knowledge below the API layer:
 - [013 Attention microscope](experiments/013_attention_microscope.md): inspect per-layer, per-head attention patterns on Hongloumeng prompts.
 - [014 Head ablation](experiments/014_head_ablation.md): temporarily zero selected attention heads and measure validation loss changes.
 - [015 Memorization probe](experiments/015_memorization_probe.md): compare generated continuations against exact source text continuations.
+- [016 Hongloumeng RoPE](experiments/016_hongloumeng_rope.md): compare learned absolute position embeddings with RoPE.
 
 ## GPT Block Anatomy
 
