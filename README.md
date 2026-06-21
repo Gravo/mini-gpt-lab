@@ -104,6 +104,7 @@ This project is designed to show working knowledge below the API layer:
 - [026 Hongloumeng BPE 4500 context 192 text-split](experiments/026_hongloumeng_bpe4500_context192_textsplit.md): test smaller BPE with longer context under raw-text validation.
 - [027 Hongloumeng layers 9 text-split](experiments/027_hongloumeng_layers9_textsplit.md): increase the best char RoPE baseline depth by 50%.
 - [028 Hongloumeng layers 9 context 192 text-split](experiments/028_hongloumeng_layers9_context192_textsplit.md): combine the deeper char model with longer context.
+- [029 Hongloumeng layers 9 context 256 text-split](experiments/029_hongloumeng_layers9_context256_textsplit.md): extend the deeper char model to a 256-character context.
 
 ## GPT Block Anatomy
 
