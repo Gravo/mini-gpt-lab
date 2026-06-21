@@ -89,6 +89,7 @@ This project is designed to show working knowledge below the API layer:
 - [011 Hongloumeng wide dropout 0.15](experiments/011_hongloumeng_wide_dropout015.md): longer wide-model training with best-checkpoint saving.
 - [012 Hongloumeng width 256](experiments/012_hongloumeng_width256.md): wider 6-layer model with 256 hidden dimensions.
 - [013 Attention microscope](experiments/013_attention_microscope.md): inspect per-layer, per-head attention patterns on Hongloumeng prompts.
+- [014 Head ablation](experiments/014_head_ablation.md): temporarily zero selected attention heads and measure validation loss changes.
 
 ## GPT Block Anatomy
 
