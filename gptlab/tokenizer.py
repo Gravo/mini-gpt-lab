@@ -1,4 +1,6 @@
 from collections import Counter
+import json
+from pathlib import Path
 
 
 class CharTokenizer:
@@ -119,16 +121,29 @@ class BPETokenizer:
 
 def build_tokenizer(text: str, cfg: dict | None = None) -> CharTokenizer | BPETokenizer:
     cfg = cfg or {"type": "char"}
+    cache_path = cfg.get("cache_path")
+    if cache_path:
+        path = Path(cache_path)
+        if path.exists():
+            state = json.loads(path.read_text(encoding="utf-8"))
+            return tokenizer_from_state(state)
+
     kind = cfg.get("type", "char")
     if kind == "char":
-        return CharTokenizer(text)
+        tokenizer = CharTokenizer(text)
     if kind == "bpe":
-        return BPETokenizer(
+        tokenizer = BPETokenizer(
             text,
             vocab_size=cfg.get("vocab_size", 8000),
             min_pair_freq=cfg.get("min_pair_freq", 2),
         )
-    raise ValueError(f"Unknown tokenizer: {kind}")
+    elif kind not in {"char", "bpe"}:
+        raise ValueError(f"Unknown tokenizer: {kind}")
+
+    if cache_path:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(tokenizer.to_state(), ensure_ascii=False), encoding="utf-8")
+    return tokenizer
 
 
 def tokenizer_from_state(state: dict) -> CharTokenizer | BPETokenizer:

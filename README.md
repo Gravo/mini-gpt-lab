@@ -97,6 +97,8 @@ This project is designed to show working knowledge below the API layer:
 - [019 Hongloumeng width 384](experiments/019_hongloumeng_width384.md): scale the best RoPE baseline from 256 to 384 hidden dimensions.
 - [020 Hongloumeng context 192](experiments/020_hongloumeng_context192.md): extend the best RoPE baseline from 128 to 192 character context.
 - [021 Hongloumeng BPE 4500](experiments/021_hongloumeng_bpe4500.md): compare character tokenization with a small BPE tokenizer.
+- [022 BPE tokenizer cache](experiments/022_bpe_tokenizer_cache.md): cache trained BPE tokenizer state for reproducible larger-vocab experiments.
+- [023 Hongloumeng BPE 6000](experiments/023_hongloumeng_bpe6000.md): test a larger BPE vocabulary with the best RoPE baseline.
 
 ## GPT Block Anatomy
 

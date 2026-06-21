@@ -69,8 +69,17 @@ def main() -> None:
         device = cfg["device"]
 
     text = Path(cfg["data_path"]).read_text(encoding="utf-8")
-    tokenizer = build_tokenizer(text, cfg.get("tokenizer"))
-    ids = torch.tensor(tokenizer.encode(text), dtype=torch.long)
+    tokenizer_cfg = cfg.get("tokenizer") or {}
+    tokenizer = build_tokenizer(text, tokenizer_cfg)
+    encoded_cache_path = tokenizer_cfg.get("encoded_cache_path")
+    if encoded_cache_path and Path(encoded_cache_path).exists():
+        ids = torch.load(encoded_cache_path, weights_only=True)
+    else:
+        ids = torch.tensor(tokenizer.encode(text), dtype=torch.long)
+        if encoded_cache_path:
+            encoded_path = Path(encoded_cache_path)
+            encoded_path.parent.mkdir(parents=True, exist_ok=True)
+            torch.save(ids, encoded_path)
     tokens_per_char = len(ids) / len(text)
     n = int(0.9 * len(ids))
     train_data, val_data = ids[:n], ids[n:]

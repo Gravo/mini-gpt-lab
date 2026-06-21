@@ -26,3 +26,12 @@ def test_bpe_tokenizer_state_roundtrip():
 def test_build_tokenizer_selects_bpe():
     tokenizer = build_tokenizer("寶玉寶玉", {"type": "bpe", "vocab_size": 8})
     assert isinstance(tokenizer, BPETokenizer)
+
+
+def test_build_tokenizer_uses_cache(tmp_path):
+    cache_path = tmp_path / "bpe.json"
+    cfg = {"type": "bpe", "vocab_size": 8, "cache_path": str(cache_path)}
+    tokenizer = build_tokenizer("寶玉寶玉笑道", cfg)
+    restored = build_tokenizer("different text", cfg)
+    assert cache_path.exists()
+    assert restored.encode("寶玉寶玉笑道") == tokenizer.encode("寶玉寶玉笑道")
