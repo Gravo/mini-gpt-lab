@@ -1,0 +1,19 @@
+data_path: data/hongloumeng_80.txt
+out_dir: runs/hongloumeng_80_char_width256_rope_context192
+seed: 1337
+batch_size: 32
+block_size: 192
+max_steps: 5000
+eval_interval: 250
+eval_iters: 20
+learning_rate: 0.0003
+device: auto
+model:
+  vocab_size: null
+  n_layer: 6
+  n_head: 8
+  n_embd: 256
+  dropout: 0.15
+  norm: layernorm
+  mlp: gelu
+  position: rope
