@@ -101,6 +101,8 @@ This project is designed to show working knowledge below the API layer:
 - [023 Hongloumeng BPE 6000](experiments/023_hongloumeng_bpe6000.md): test a larger BPE vocabulary with the best RoPE baseline.
 - [024 Hongloumeng BPE 6000 context 192](experiments/024_hongloumeng_bpe6000_context192.md): combine larger BPE tokenization with longer context.
 - [025 Text-split tokenizer comparison](experiments/025_textsplit_tokenizer_comparison.md): compare char and BPE runs after splitting validation on raw text.
+- [026 Hongloumeng BPE 4500 context 192 text-split](experiments/026_hongloumeng_bpe4500_context192_textsplit.md): test smaller BPE with longer context under raw-text validation.
+- [027 Hongloumeng layers 9 text-split](experiments/027_hongloumeng_layers9_textsplit.md): increase the best char RoPE baseline depth by 50%.
 
 ## GPT Block Anatomy
 
