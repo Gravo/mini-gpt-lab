@@ -94,6 +94,7 @@ This project is designed to show working knowledge below the API layer:
 - [016 Hongloumeng RoPE](experiments/016_hongloumeng_rope.md): compare learned absolute position embeddings with RoPE.
 - [017 Hongloumeng RMSNorm](experiments/017_hongloumeng_rmsnorm.md): compare LayerNorm and RMSNorm after RoPE.
 - [018 Hongloumeng SwiGLU](experiments/018_hongloumeng_swiglu.md): compare GELU and SwiGLU MLPs after RoPE.
+- [019 Hongloumeng width 384](experiments/019_hongloumeng_width384.md): scale the best RoPE baseline from 256 to 384 hidden dimensions.
 
 ## GPT Block Anatomy
 
