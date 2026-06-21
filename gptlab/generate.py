@@ -4,7 +4,7 @@ from pathlib import Path
 import torch
 
 from .model import GPT, GPTConfig
-from .tokenizer import CharTokenizer
+from .tokenizer import CharTokenizer, tokenizer_from_state
 
 
 def main() -> None:
@@ -20,7 +20,10 @@ def main() -> None:
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     ckpt = torch.load(args.checkpoint, map_location=device)
-    tokenizer = CharTokenizer("".join(ckpt["chars"]))
+    if "tokenizer" in ckpt:
+        tokenizer = tokenizer_from_state(ckpt["tokenizer"])
+    else:
+        tokenizer = CharTokenizer("".join(ckpt["chars"]))
     model = GPT(GPTConfig(**ckpt["config"])).to(device)
     model.load_state_dict(ckpt["model"])
 

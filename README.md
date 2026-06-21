@@ -96,6 +96,7 @@ This project is designed to show working knowledge below the API layer:
 - [018 Hongloumeng SwiGLU](experiments/018_hongloumeng_swiglu.md): compare GELU and SwiGLU MLPs after RoPE.
 - [019 Hongloumeng width 384](experiments/019_hongloumeng_width384.md): scale the best RoPE baseline from 256 to 384 hidden dimensions.
 - [020 Hongloumeng context 192](experiments/020_hongloumeng_context192.md): extend the best RoPE baseline from 128 to 192 character context.
+- [021 Hongloumeng BPE 4500](experiments/021_hongloumeng_bpe4500.md): compare character tokenization with a small BPE tokenizer.
 
 ## GPT Block Anatomy
 

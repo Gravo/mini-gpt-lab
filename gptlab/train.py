@@ -5,7 +5,7 @@ from pathlib import Path
 import torch
 
 from .model import GPT, GPTConfig
-from .tokenizer import CharTokenizer
+from .tokenizer import BPETokenizer, CharTokenizer, build_tokenizer
 
 
 def load_config(path: Path) -> dict:
@@ -38,12 +38,19 @@ def estimate_loss(model: GPT, train_data: torch.Tensor, val_data: torch.Tensor, 
     return out
 
 
-def save_checkpoint(path: Path, model: GPT, model_cfg: GPTConfig, tokenizer: CharTokenizer, metadata: dict) -> None:
+def save_checkpoint(
+    path: Path,
+    model: GPT,
+    model_cfg: GPTConfig,
+    tokenizer: CharTokenizer | BPETokenizer,
+    metadata: dict,
+) -> None:
     torch.save(
         {
             "model": model.state_dict(),
             "config": model_cfg.__dict__,
-            "chars": tokenizer.chars,
+            "tokenizer": tokenizer.to_state(),
+            "chars": getattr(tokenizer, "chars", None),
             "metadata": metadata,
         },
         path,
@@ -62,8 +69,9 @@ def main() -> None:
         device = cfg["device"]
 
     text = Path(cfg["data_path"]).read_text(encoding="utf-8")
-    tokenizer = CharTokenizer(text)
+    tokenizer = build_tokenizer(text, cfg.get("tokenizer"))
     ids = torch.tensor(tokenizer.encode(text), dtype=torch.long)
+    tokens_per_char = len(ids) / len(text)
     n = int(0.9 * len(ids))
     train_data, val_data = ids[:n], ids[n:]
 
@@ -98,6 +106,8 @@ def main() -> None:
                     },
                 )
             row = {"step": step, **losses, "best_val": best_val, "best_step": best_step, "is_best": is_best}
+            row["train_nats_per_char"] = losses["train"] * tokens_per_char
+            row["val_nats_per_char"] = losses["val"] * tokens_per_char
             print(row)
             with metrics_path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(row) + "\n")
