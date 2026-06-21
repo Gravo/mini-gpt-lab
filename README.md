@@ -90,6 +90,7 @@ This project is designed to show working knowledge below the API layer:
 - [012 Hongloumeng width 256](experiments/012_hongloumeng_width256.md): wider 6-layer model with 256 hidden dimensions.
 - [013 Attention microscope](experiments/013_attention_microscope.md): inspect per-layer, per-head attention patterns on Hongloumeng prompts.
 - [014 Head ablation](experiments/014_head_ablation.md): temporarily zero selected attention heads and measure validation loss changes.
+- [015 Memorization probe](experiments/015_memorization_probe.md): compare generated continuations against exact source text continuations.
 
 ## GPT Block Anatomy
 
