@@ -106,6 +106,7 @@ This project is designed to show working knowledge below the API layer:
 - [028 Hongloumeng layers 9 context 192 text-split](experiments/028_hongloumeng_layers9_context192_textsplit.md): combine the deeper char model with longer context.
 - [029 Hongloumeng layers 9 context 256 text-split](experiments/029_hongloumeng_layers9_context256_textsplit.md): extend the deeper char model to a 256-character context.
 - [030 Hongloumeng layers 9 context 192 dropout 0.20 text-split](experiments/030_hongloumeng_layers9_context192_dropout020_textsplit.md): test stronger dropout on the current best architecture.
+- [031 Hongloumeng 120 chapters](experiments/031_hongloumeng_120_layers9_context192_dropout020_textsplit.md): train the current best architecture on all 120 chapters.
 
 ## GPT Block Anatomy
 

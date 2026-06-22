@@ -12,4 +12,10 @@ For the Hongloumeng character baseline, download public-domain Wikisource text a
 python scripts/download_hongloumeng.py --chapters 10 --out data/hongloumeng_10.txt
 ```
 
+For the full 120-chapter corpus used in experiment 031:
+
+```powershell
+python scripts/download_hongloumeng.py --chapters 120 --out data/hongloumeng_120.txt --sleep 0.4 --retries 5
+```
+
 Dataset files are intentionally not committed.

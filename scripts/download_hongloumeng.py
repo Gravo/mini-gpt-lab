@@ -77,6 +77,7 @@ def main() -> None:
     parser.add_argument("--chapters", type=int, default=10)
     parser.add_argument("--out", type=Path, default=Path("data/hongloumeng_10.txt"))
     parser.add_argument("--sleep", type=float, default=0.5)
+    parser.add_argument("--retries", type=int, default=3)
     args = parser.parse_args()
 
     if args.chapters < 1 or args.chapters > 120:
@@ -85,10 +86,16 @@ def main() -> None:
     parts = []
     for chapter in range(1, args.chapters + 1):
         print(f"Downloading chapter {chapter}/{args.chapters}")
-        try:
-            parts.append(download_chapter(chapter))
-        except (HTTPError, URLError) as exc:
-            raise SystemExit(f"Failed to download chapter {chapter}: {exc}") from exc
+        for attempt in range(1, args.retries + 1):
+            try:
+                parts.append(download_chapter(chapter))
+                break
+            except (HTTPError, URLError) as exc:
+                if attempt == args.retries:
+                    raise SystemExit(f"Failed to download chapter {chapter}: {exc}") from exc
+                wait = args.sleep * attempt * 3
+                print(f"Retrying chapter {chapter} after error: {exc}. Waiting {wait:.1f}s")
+                time.sleep(wait)
         time.sleep(args.sleep)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
