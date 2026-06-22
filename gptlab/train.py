@@ -1,5 +1,6 @@
 import argparse
 import json
+import math
 from pathlib import Path
 
 import torch
@@ -36,6 +37,29 @@ def estimate_loss(model: GPT, train_data: torch.Tensor, val_data: torch.Tensor, 
         out[split] = losses.mean().item()
     model.train()
     return out
+
+
+def get_learning_rate(cfg: dict, step: int) -> float:
+    base_lr = cfg["learning_rate"]
+    schedule = cfg.get("lr_schedule")
+    if not schedule:
+        return base_lr
+
+    schedule_type = schedule.get("type", "constant")
+    if schedule_type == "constant":
+        return base_lr
+    if schedule_type != "cosine":
+        raise ValueError(f"Unknown lr_schedule type: {schedule_type}")
+
+    warmup_steps = schedule.get("warmup_steps", 0)
+    if warmup_steps > 0 and step < warmup_steps:
+        return base_lr * step / warmup_steps
+
+    decay_steps = schedule.get("decay_steps", cfg["max_steps"])
+    min_lr = schedule.get("min_lr", 0.0)
+    progress = min(1.0, max(0.0, (step - warmup_steps) / max(1, decay_steps - warmup_steps)))
+    cosine = 0.5 * (1.0 + math.cos(math.pi * progress))
+    return min_lr + cosine * (base_lr - min_lr)
 
 
 def save_checkpoint(
@@ -124,6 +148,10 @@ def main() -> None:
     best_step = -1
 
     for step in range(cfg["max_steps"] + 1):
+        lr = get_learning_rate(cfg, step)
+        for param_group in optimizer.param_groups:
+            param_group["lr"] = lr
+
         if step % cfg["eval_interval"] == 0:
             losses = estimate_loss(model, train_data, val_data, cfg, device)
             is_best = losses["val"] < best_val
@@ -141,9 +169,17 @@ def main() -> None:
                         "best_val": best_val,
                         "train_loss": losses["train"],
                         "val_loss": losses["val"],
+                        "learning_rate": lr,
                     },
                 )
-            row = {"step": step, **losses, "best_val": best_val, "best_step": best_step, "is_best": is_best}
+            row = {
+                "step": step,
+                **losses,
+                "best_val": best_val,
+                "best_step": best_step,
+                "is_best": is_best,
+                "learning_rate": lr,
+            }
             row["train_nats_per_char"] = losses["train"] * train_tokens_per_char
             row["val_nats_per_char"] = losses["val"] * val_tokens_per_char
             print(row)
