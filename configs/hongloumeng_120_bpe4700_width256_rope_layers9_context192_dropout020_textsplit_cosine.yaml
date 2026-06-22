@@ -1,0 +1,32 @@
+data_path: data/hongloumeng_120.txt
+out_dir: runs/hongloumeng_120_bpe4700_width256_rope_layers9_context192_dropout020_textsplit_cosine
+seed: 1337
+split: text
+tokenizer:
+  type: bpe
+  vocab_size: 4700
+  min_pair_freq: 2
+  cache_path: data/tokenizers/hongloumeng_120_bpe4700.json
+  train_encoded_cache_path: data/tokenizers/hongloumeng_120_bpe4700_train_textsplit_ids.pt
+  val_encoded_cache_path: data/tokenizers/hongloumeng_120_bpe4700_val_textsplit_ids.pt
+batch_size: 32
+block_size: 192
+max_steps: 5000
+eval_interval: 250
+eval_iters: 20
+learning_rate: 0.0003
+lr_schedule:
+  type: cosine
+  warmup_steps: 200
+  decay_steps: 5000
+  min_lr: 0.00003
+device: auto
+model:
+  vocab_size: null
+  n_layer: 9
+  n_head: 8
+  n_embd: 256
+  dropout: 0.20
+  norm: layernorm
+  mlp: gelu
+  position: rope

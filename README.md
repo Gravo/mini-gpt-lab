@@ -110,6 +110,7 @@ This project is designed to show working knowledge below the API layer:
 - [032 Hongloumeng 120 longer training](experiments/032_hongloumeng_120_steps5000.md): extend the 120-chapter run while keeping the model fixed.
 - [033 Hongloumeng 120 cosine learning rate](experiments/033_hongloumeng_120_cosine_lr.md): add warmup and cosine decay after the longer-run overfit signal.
 - [034 Hongloumeng 120 context 288 cosine learning rate](experiments/034_hongloumeng_120_context288_cosine_lr.md): retest longer context after the cosine LR improvement.
+- [035 Hongloumeng 120 BPE4700 cosine learning rate](experiments/035_hongloumeng_120_bpe4700_cosine_lr.md): retest a small BPE merge budget under the stronger 120-chapter cosine setup.
 
 ## GPT Block Anatomy
 
